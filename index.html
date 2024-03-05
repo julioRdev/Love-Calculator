@@ -1,0 +1,257 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <title>Title</title>
+        <!-- Required meta tags -->
+        <meta charset="utf-8" />
+        <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1, shrink-to-fit=no"
+        />
+
+        <!-- Bootstrap CSS v5.2.1 -->
+        <link
+            href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+            rel="stylesheet"
+            integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
+            crossorigin="anonymous"
+        />
+        <link rel="stylesheet" href="styles.css">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Noto+Serif&family=Protest+Riot&family=Roboto+Condensed:wght@300&family=Roboto+Slab&display=swap" rel="stylesheet">
+    </head>
+
+    <body>
+        <div class="background" id="gif_back"></div>
+        <main id="mainForm">
+            <h1 class="display-2" id="title_love">Love Calculator</h1><br><br><br>
+            <!-- Formulario -->
+            <div class="container">
+                <form id="loveCalculatorForm" class="w-100">
+                    <div class="inputs_container d-flex justify-content-center">
+                        <div class="input1">
+                            <label for="fname" class="font-weight-bold">Tu nombre:</label>
+                            <div class="heart-input scale-up-center">
+                                <input type="text" id="fname" name="fname" class="form-control" placeholder="Escribe aquí" autocomplete="off">
+                            </div>
+                        </div>
+                        <div class="input2">
+                            <label for="sname" class="font-weight-bold">Nombre de tu pareja:</label>
+                            <div class="heart-input scale-up-center" id="heart_input_2">
+                                <input type="text" id="sname" name="sname" class="form-control text " placeholder="Escribe aquí" autocomplete="off">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-danger mx-auto d-block mt-4">Calcular Porcentaje de Amor</button>
+                </form>
+            </div>
+            
+            
+        </main>
+
+        <div class="result_screen mt-4 hide">
+            <img src="./img/heart_100.png" alt="" id="heart_100" class="hide puff-in-center">
+            <img src="./img/heart_75.png" alt="" id="heart_75" class="hide puff-in-center">
+            <img src="./img/heart_50.png" alt="" id="heart_50" class="hide puff-in-center">
+            <img src="./img/heart_25.png" alt="" id="heart_25" class="hide puff-in-center">
+    
+            <!-- Resultado -->
+            <div class="average">
+                <div id="result" class="text-white display-6 fw-bold font-serif hide"></div>
+                <br><br>
+                <div id="avg" class="text-white display-1 fw-bold font-serif text-center hide"></div>
+                <br><br>
+                <img src="./img/text_25.png" alt="" class="hide puff-in-center" id="text_25">
+                <img src="./img/text_50.png" alt="" class="hide puff-in-center" id="text_50">
+                <img src="./img/text_75.png" alt="" class="hide puff-in-center" id="text_75">
+                <img src="./img/text_100.png" alt="" class="hide puff-in-center" id="text_100">
+
+                <button id="restartButton" class="btn btn-danger mb-4 mt-4 hide">Reiniciar</button>
+            </div>
+        </div>
+    
+        <!-- Corazón con barra de progreso -->
+        <div id="progressScreen" class="hide">
+            <div class="heart rotate-center"></div>
+            <br><br><br>
+            <div class="progress-container">
+                <div class="progress-bar" id="progressBar"></div>
+            </div>
+            
+        </div>
+        <!-- Bootstrap JavaScript Libraries -->
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <script
+            src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
+            integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
+            crossorigin="anonymous"
+        ></script>
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.js"></script>
+        <script
+            src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js"
+            integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+"
+            crossorigin="anonymous"
+        ></script>
+        <script>
+            $('#loveCalculatorForm').submit(function(event) {
+                event.preventDefault();
+                
+                const settings = {
+                    async: true,
+                    crossDomain: true,
+                    url: 'https://love-calculator.p.rapidapi.com/getPercentage',
+                    method: 'GET',
+                    headers: {
+                        'X-RapidAPI-Key': 'b50303c583msh26e201332865cf7p1ce362jsn04b0cc09ca75',
+                        'X-RapidAPI-Host': 'love-calculator.p.rapidapi.com'
+                    },
+                    data: {
+                        sname: $('#sname').val(),
+                        fname: $('#fname').val()
+                    }
+                };
+        
+                // Ocultar el formulario
+                $('#mainForm').addClass('hide');
+                $('#gif_back').addClass('hide');
+                $('#progressScreen').removeClass('hide');
+                $('#loading_text').removeClass('hide');
+
+                var loadingMessages = ["Calculando resultados...", "Haciendo unos últimos análisis...", "¡Casi listo!"];
+                var messageIndex = 0;
+                var loadingTextElement = $('#loadingText');
+                var intervalMessage = setInterval(function() {
+                    loadingTextElement.text(loadingMessages[messageIndex]);
+                    messageIndex = (messageIndex + 1) % loadingMessages.length;
+                }, 1500);
+                    
+                // Simular cálculo de porcentaje de amor
+                var percentage = 0;
+                var interval = setInterval(function() {
+                    $('#progressBar').css('width', percentage + '%');
+                    if (percentage >= 100) {
+                        clearInterval(interval);
+                        // Realizar la solicitud AJAX después de completar la barra de progreso
+                        $.ajax(settings).done(function (response) {                            
+                            var color;
+                            if (response.percentage <= 25) {
+                                color = '#e080fd';
+                            } else if (response.percentage >= 26 && response.percentage <= 49) {
+                                color = '#fff27f';
+                            } else if (response.percentage >= 50 && response.percentage <= 74) {
+                                color = '#F2AAFF';
+                            } else {
+                                color = '#eb3e5b';
+                            }
+                            
+                            setTimeout(function() {
+                                
+                                $('#progressScreen').addClass('hide');
+                                $('#loading_text').addClass('hide');
+                                $('#progressBar').css('width', '0%');
+                                $('#restartButton').removeClass('hide');
+                                $('body').css('background-color', color);
+                                if (color == '#e080fd') {
+                                    Swal.fire({
+                                    title: "Obtuviste " + response.percentage + "% de compatibilidad",
+                                    width: '50%',
+                                    padding: '2%',
+                                    color: "#716add",
+                                    background: "#A6C4D3",
+                                    backdrop: `
+                                        rgba(0,0,123,0.4)
+                                        url("./img/rain.gif")
+                                        top center
+                                        repeat
+                                    `
+                                    });
+                                    $('#heart_25').removeClass('hide');
+                                    $('#text_25').removeClass('hide');
+                                }
+                                else if (color == '#fff27f') {
+                                    Swal.fire({
+                                    title: "Obtuviste " + response.percentage + "% de compatibilidad",
+                                    width: '70%',
+                                    padding: '2%',
+                                    color: "#716add",
+                                    background: "#FFF890",
+                                    backdrop: `
+                                        rgba(0,0,123,0.4)
+                                        url("./img/bubbles.gif")
+                                        top center
+                                        repeat
+                                    `
+                                    });
+                                    $('#heart_50').removeClass('hide');
+                                    $('#text_50').removeClass('hide');
+                                } 
+                                else if (color == '#F2AAFF') {
+                                    Swal.fire({
+                                    title: "Obtuviste " + response.percentage + "% de compatibilidad",
+                                    width: '70%',
+                                    padding: '2%',
+                                    color: "#716add",
+                                    background: "#F2AAFF",
+                                    backdrop: `
+                                        rgba(0,0,123,0.4)
+                                        url("./img/stars.gif")
+                                        top center
+                                        repeat
+                                    `,
+                                    });
+                                    $('#heart_75').removeClass('hide');
+                                    $('#text_75').removeClass('hide');
+                                } 
+                                else {
+                                    Swal.fire({
+                                    title: "Obtuviste " + response.percentage + "% de compatibilidad",
+                                    width: '70%',
+                                    padding: '2%',
+                                    color: "#ffffff",
+                                    background: "#FF3A2D",
+                                    backdrop: `
+                                        rgba(255,79,68,0.4)
+                                        url("./img/hearts.gif")
+                                        top center
+                                        repeat
+                                    `,
+                                    });
+                                    $('#heart_100').removeClass('hide');
+                                    $('#text_100').removeClass('hide');
+                                }
+                                $('#result').removeClass('hide');
+                                $('#avg').removeClass('hide');
+                                $('#result').html('El porcentaje de amor entre ' + response.fname + ' y ' + response.sname + ' es:');
+                                $('#avg').html(response.percentage + '%');
+                            }, 1000); // Reducir el tiempo para una transición más rápida
+                        });
+                    } else {
+                        percentage += 1;
+                    }
+                }, 30); // Incrementar el tiempo para ralentizar la barra de progreso
+            });
+
+            $('#restartButton').click(function () {
+            // Limpiar los campos de entrada
+            $('#fname').val('');
+            $('#sname').val('');
+
+            $('#mainForm').removeClass('hide');
+            $('#gif_back').removeClass('hide');
+            $('#result').addClass('hide');
+            $('#avg').addClass('hide');
+
+            $('.result_screen img').addClass('hide');
+            $('.average').addClass('hide');
+            $('body').css('background-color', '');
+
+            $(this).addClass('hide');
+        });
+        </script>
+        
+        
+    </body>
+</html>
